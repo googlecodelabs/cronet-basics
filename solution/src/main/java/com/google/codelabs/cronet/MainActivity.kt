@@ -41,6 +41,7 @@ import com.google.android.gms.net.CronetProviderInstaller
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.chromium.net.CronetEngine
+import java.io.File
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Supplier
 
@@ -67,9 +68,15 @@ class MainActivity : ComponentActivity() {
         CronetProviderInstaller.installProvider(ctx).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(LOGGER_TAG, "Successfully installed Play Services provider: $it")
+                val logFile = File(ctx.cacheDir, "network_log.json")
+
                 val cronetEngine = CronetEngine.Builder(ctx)
+                    .setStoragePath(ctx.cacheDir.absolutePath)
                     .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_IN_MEMORY, 10 * 1024 * 1024)
-                    .build()
+//                    .enableQuic(true)
+                    .build().apply {
+                        startNetLogToFile(logFile.absolutePath, /* include_http2 */ true)
+                    }
                 imageDownloader.set(CronetImageDownloader(cronetEngine))
             } else {
                 Log.w(LOGGER_TAG, "Unable to load Cronet from Play Services", it.exception)
