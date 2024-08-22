@@ -25,7 +25,9 @@ class ImagesViewModel : ViewModel() {
     val images = mutableStateListOf<DownloadedImage>()
 
     fun addImage(): Int {
-        images.add(DownloadedImage(URLS[Random.nextInt(URLS.size)]))
+//        images.add(DownloadedImage(URLS[Random.nextInt(URLS.size)]))
+        images.add(DownloadedImage(URLS[5]))
+
         return images.size - 1
     }
 

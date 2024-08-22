@@ -30,12 +30,16 @@ internal abstract class ReadToMemoryCronetCallback : UrlRequest.Callback() {
     final override fun onRedirectReceived(
         request: UrlRequest, info: UrlResponseInfo?, newLocationUrl: String?
     ) {
+        Log.d("Cronet", "Response Redirect")
+
         request.followRedirect()
     }
 
     final override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         Log.i(TAG, "****** Response Started ******")
         Log.i(TAG, "*** Headers Are *** ${info.allHeaders}")
+        Log.d("Cronet", "Response started")
+        Log.d("Cronet", "URL: ${info}")
 
         // One must use a *direct* byte buffer when calling the read method.
         request.read(ByteBuffer.allocateDirect(BYTE_BUFFER_CAPACITY_BYTES))
@@ -44,6 +48,9 @@ internal abstract class ReadToMemoryCronetCallback : UrlRequest.Callback() {
     final override fun onReadCompleted(
         request: UrlRequest, info: UrlResponseInfo, byteBuffer: ByteBuffer
     ) {
+        Log.d("Cronet", "Read completed")
+        Log.d("Cronet", "Buffer remaining: ${byteBuffer.remaining()}")
+
         // The byte buffer we're getting in the callback hasn't been flipped for reading,
         // so flip it so we can read the content.
         byteBuffer.flip()
@@ -58,6 +65,8 @@ internal abstract class ReadToMemoryCronetCallback : UrlRequest.Callback() {
 
     final override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
         val bodyBytes = bytesReceived.toByteArray()
+        Log.d("Cronet", "Request succeeded")
+        Log.d("Cronet", "URL: ${info.url}")
 
         // We invoke the callback directly here for simplicity. Note that the executor running this
         // callback might be shared with other Cronet requests, or even with other parts of your

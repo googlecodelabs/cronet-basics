@@ -43,6 +43,8 @@ internal class CronetImageDownloader (
                 request: UrlRequest,
                 info: UrlResponseInfo,
                 bodyBytes: ByteArray) {
+                engine.stopNetLog()
+
                 cont.resume(ImageDownloaderResult(
                     successful = true,
                     blob = bodyBytes,
